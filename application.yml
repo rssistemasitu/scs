@@ -11,11 +11,15 @@ microservice:
   payment-service:
     endpoints:
       endpoint:
-        uri: http://PAYMENT-SERVICE/payment/doPayment
+        uri: http://PAYMENT-SERVICE/api/v1/payment
   main-service:
     endpoints:
       endpoint:
-        uri: http://MAIN-SERVICE/order/bookOrder
+        uri: http://MAIN-SERVICE/api/v1/order
+  security-service:
+    endpoints:
+      endpoint:
+        uri: http://MAIN-SERVICE/api/v1/auth
 
 app:
   jwtSecret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
