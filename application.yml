@@ -20,6 +20,10 @@ microservice:
     endpoints:
       endpoint:
         uri: http://MAIN-SERVICE/api/v1/auth
+  platform-service:
+    endpoints:
+      endpoint:
+        uri: http://PLATFORM-SERVICE/api/v1/movie
 
 app:
   jwtSecret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
