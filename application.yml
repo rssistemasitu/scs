@@ -15,7 +15,7 @@ microservice:
   main-service:
     endpoints:
       endpoint:
-        uri: http://MAIN-SERVICE/api/v1/order
+        uri: http://MAIN-SERVICE/api/v1/main
   security-service:
     endpoints:
       endpoint:
