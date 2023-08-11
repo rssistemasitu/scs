@@ -1,0 +1,22 @@
+server:
+  port: 9500
+
+spring:
+  application:
+    name: PLATFORM-SERVICE
+
+  cache:
+    type: redis
+
+  config:
+    import: "optional:configserver:http://localhost:9196"
+
+  sleuth:
+    span-name-logger-key: request-id
+    sampler:
+      probability: 1.0
+
+logging:
+  file:
+    path: C:/Users/roger/Desktop/TCC/scs/scs-backend/logstash/logs
+    name: C:/Users/roger/Desktop/TCC/scs/scs-backend/logstash/logs/microservice.log

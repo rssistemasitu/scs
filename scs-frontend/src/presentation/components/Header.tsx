@@ -1,27 +1,82 @@
 import { Link } from 'react-router-dom';
-import logo from '../../assets/logo.svg'
+import logo from '../../assets/logo_scs_bg_cut.png'
 import foto from '../../assets/rog.jpg'
-import { Bars4Icon, BellIcon, GiftIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { useState } from 'react';
+import { ArrowRightOnRectangleIcon, Bars4Icon, BellIcon, GiftIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { useEffect, useState } from 'react';
+import UseAuth from '../hooks/UseAuth';
+import io from 'socket.io-client';
+import Modal from './Modal';
+
+export type Notification = {
+  to: string;
+  from: string;
+  content: string;
+  timestamp: string;
+}
+
+const socket = io('http://localhost:8878');
 
 const Header = () => {
   const [menuActive, setMenuActive] = useState(false)
+  const { logout, isAuthenticated, user } = UseAuth();
+  const [message, setMessage] = useState<string>("");
+  const [openModal, setOpenModal] = useState(false);
 
   const menuToogle = () => {
     let menu = document.getElementById('menu');
     menu?.classList.toggle('activeMenu')
     menu?.classList.contains('activeMenu') ? setMenuActive(true) : setMenuActive(false)
-  }
+  }   
+  
+  
+  const [on, setOn] = useState(false);
 
+  useEffect(() => {
+
+    const closeModal = () => {
+      setOpenModal(false)
+    }
+
+    socket.on('connect', () => {
+      console.log('Conectado ao servidor! '+ socket.id);
+      setOn(true);  
+
+      socket.onAny((messageSendToAllUsers, ...args: Notification[])=>{
+        setMessage(args[0].content);
+        setOpenModal(true)
+        setTimeout(closeModal, 10000)
+      });       
+
+    }); 
+
+    return () => {
+      socket.off();
+    };
+
+  }, [on])
+
+
+ const sendMessage = () => {
+    socket.emit("messageSendToAllUsers", { 
+      to: "all",
+      from: socket.id,
+      content: "Mensagem do Frontend",
+      timestamp: new Date().toLocaleDateString
+    }, 
+    console.log("Mensagem enviada..."));
+ } 
+
+      
   return (
-    <div className="w-screen p-3">
-      <div className="max-w-7x1 flex p-2 mx-auto">
+    <div className="w-screen p-3 fixed bg-black">
+      <Modal props={openModal} text={message}/>
+      <div className="max-w-7x1 flex  mx-auto">
         {/* Logo brand */}
-        <img className='w-[7rem]' src={logo} alt="" />
+        <img className='w-[3rem]' src={logo} alt="" />
 
         {/* Menu Btn */}
-        {!menuActive ? <Bars4Icon className='md:hidden flex w-7 transition-all .2s text-gray-300 float-right absolute right-7' onClick={menuToogle}/> :
-        <XMarkIcon className='md:hidden flex w-7 transition-all .2s text-gray-300 float-right absolute right-7' onClick={menuToogle}/>}
+        {!menuActive ? <Bars4Icon className='md:hidden flex w-7  transition-all .2s text-gray-300 float-right absolute right-5' onClick={menuToogle}/> :
+        <XMarkIcon className='md:hidden flex w-7 animate-[spin_1s] transition-all .2s text-gray-300 float-right absolute right-5' onClick={menuToogle}/>}
 
                 
         {/* Menu */}
@@ -32,9 +87,8 @@ const Header = () => {
 
             {/* Links */}
             <div className="links md:ml-8">
-              <ul className="flex md:flex-row flex-col gap-3 text-gray-400 md:items-center">
-              
-                <li className='mx-1 hover:text-red-400 font-semibold text-red-500 cursor-pointer'>Home</li>
+              <ul className="flex md:flex-row flex-col gap-3 text-gray-400 md:items-center">              
+                <li className='mx-1 hover:text-red-400 font-semibold text-red-500 cursor-pointer'><Link to="/home">Home</Link></li>
                 <li className='mx-1 hover:text-gray-500 cursor-pointer'>Recomendações</li>
                 <li className='mx-1 hover:text-gray-500 cursor-pointer'>Filmes</li>
                 <li className='mx-1 hover:text-gray-500 cursor-pointer'>Séries</li>
@@ -52,7 +106,9 @@ const Header = () => {
             </svg>
             <GiftIcon className='w-5 mx-2 cursor-pointer' />
             <BellIcon className='w-5 mx-2 cursor-pointer' />
-            <img className='w-8 mx-2 h-8 rounded-full cursor-pointer' src={foto} alt="" />
+            {isAuthenticated ? <Link to="/list-profile"><img className='w-8 mx-2 h-8 rounded-full cursor-pointer' src={foto} alt="" /></Link>: null}
+            {isAuthenticated ? <ArrowRightOnRectangleIcon className='w-5 mx-2 cursor-pointer' type='button' onClick={() => logout(user.user.token)}/>
+            : null}     
           </div>
 
         </div>

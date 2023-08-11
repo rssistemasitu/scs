@@ -1,0 +1,35 @@
+server:
+  port: 9192
+
+socket:
+  host: 0.0.0.0
+  port: 8878
+
+spring:
+  application:
+    name: MAIN-SERVICE
+
+  cache:
+    type: redis
+
+  data:
+    mongodb:
+      user: admin
+      pwd: password
+      host: localhost
+      port: 27017
+      database: scs
+      authentication-database: admin
+
+  config:
+    import: "optional:configserver:http://localhost:9196"
+
+  sleuth:
+    span-name-logger-key: request-id
+    sampler:
+      probability: 1.0
+
+logging:
+  file:
+    path: C:/Users/roger/Desktop/TCC/scs/scs-backend/logstash/logs
+    name: C:/Users/roger/Desktop/TCC/scs/scs-backend/logstash/logs/microservice.log

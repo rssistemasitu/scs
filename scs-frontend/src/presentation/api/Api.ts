@@ -1,33 +1,129 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
-const API_KEY = "1e2a083242e5ee3f55493d2e59bb0879"
+const API_URL = `http://localhost:8989/api/v1`;
 
 const api = axios.create({
-  baseURL: `https://api.themoviedb.org/3`, // Substitua pela URL da sua API
+  baseURL: API_URL,
 });
 
+const createHeader = (token: string) => {
+  return  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  };
+}
 
-export const getMovies = async (path: any) => {
+export const signin = async (email: string, password: string) => {
   try {
-    let url = `https://api.themoviedb.org/3${path}`;
-    const response = await api.get(url);
+    let url = `${API_URL}/auth/signin`;
+    const response: AxiosResponse = await api.post(url, {email, password});
+    return response.data;
+  } catch (error: any) {
+    throw handleApiError(error);
+  }  
+};
+
+export const signout = async (token: string) => {
+  try {
+    let url = `${API_URL}/auth/logout`;
+    const response: AxiosResponse = await api.get(url, createHeader(token));
+    return response.data;
+  } catch (error: any) {
+    throw handleApiError(error);
+  }  
+};
+
+export const signupUser = async (signupUserType: SignupUserType) => {
+  try {
+    const date = formatDate(signupUserType.date_birth);
+    signupUserType.date_birth = date;
+    const url = `${API_URL}/auth/signup`;
+    const response: AxiosResponse = await api.post(url, signupUserType);
+    return response.data;
+  } catch (error: any) {
+    throw handleApiError(error);
+  }
+};
+
+export const signupDependent = async (signupDependentType: SignupDependentType) => {
+  try {
+    const date = formatDate(signupDependentType.date_birth);
+    signupDependentType.date_birth = date;
+    let url = `${API_URL}/auth/signup-dependent`;
+    const response: AxiosResponse = await api.post(url, signupDependentType);
+    return response.data;
+  } catch (error: any) {
+    throw handleApiError(error);
+  }  
+};
+
+export const getUserFull = async (token: string) => {
+  try {
+    let url = `${API_URL}/user/user-full`;
+    const response: AxiosResponse = await api.get(url, createHeader(token));
+    return response.data;
+  } catch (error: any) {
+    throw handleApiError(error);
+  }  
+};
+
+export const getMovies = async (path: any, token: string) => {
+  try {    
+    let url = `${API_URL}/movie/${path}`;
+    const response: AxiosResponse = await api.get(url, createHeader(token));
     const moviesList = response.data;
     return moviesList?.results
-  } catch (error) {
-    console.log("error getMovies: ", error);
+  } catch (error: any) {
+    throw handleApiError(error);
   }
 };
 
-export const getGenres = async () => {
-  try {
-    let url = `https://api.themoviedb.org/3/genre/movie/list?language=pt-BR&api_key=${API_KEY}`;
-    const response = await api.get(url);
-    const genresList = response.data;
-    return genresList
-  } catch (error) {
-    console.log("error getGenres: ", error);
-  }
-};
+export type UserInfo = {
+  id: string;
+  email: string;
+  type: string;
+  token: string;
+  roles: Array<string>;
+}
+
+export type UserFull = {
+  owner_id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  cpf: string;
+  dateBirth: string;
+  cardName: string;
+  cardNumber: string;
+  expirationDate: string;
+  cvv: number;
+  status: boolean;
+  isOwner: boolean;
+  userDependents: Array<Object>;
+}
+
+export type SignupUserType = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  cpf: string;
+  date_birth: string;
+  card_name: string;
+  card_number: string;
+  expiration_date: string;
+  cvv: number;
+}
+
+export type SignupDependentType = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  cpf: string;
+  date_birth: string;
+}
 
 export type Movie = {
   adult: boolean;
@@ -47,50 +143,65 @@ export type Movie = {
   vote_count: number;
 }
 
-export type Genre = {
-  id: number;
-  name: string;
-}
-
-
 export const categories = [
     {
       name: "trending",
       title: "Em alta",
-      path: `/trending/all/week?api_key=${API_KEY}&language=pt-BR`,
+      path: `trending`,
       isLarge: true,
     },
     {
-      name: "netflixOriginals",
-      title: "Originais Netflix",
-      path: `/discover/tv?api_key=${API_KEY}&with_networks=213`,
+      name: "now_playing",
+      title: "Em destaque",
+      path: `now-playing`,
       isLarge: false,
     },
     {
       name: "topRated",
       title: "Populares",
-      path: `/movie/top_rated?api_key=${API_KEY}&language=pt-BR`,
+      path: `top-rated`,
       isLarge: false,
     },
     {
-      name: "comedy",
-      title: "Comédias",
-      path: `/discover/tv?api_key=${API_KEY}&with_genres=35`,
+      name: "upcoming",
+      title: "Em breve",
+      path: `upcoming`,
       isLarge: false,
-    },
-    {
-      name: "romances",
-      title: "Romances",
-      path: `/discover/tv?api_key=${API_KEY}&with_genres=10749`,
-      isLarge: false,
-    },
-    {
-      name: "documentaries",
-      title: "Documentários",
-      path: `/discover/tv?api_key=${API_KEY}&with_genres=99`,
-      isLarge: false,
-    },
-  ];
-  
+    }
+    // {
+    //   name: "adult",
+    //   title: "Adultos",
+    //   path: `adult`,
+    //   isLarge: false,
+    // }
+];
 
-  
+const handleApiError = (error: AxiosError): Object =>  {
+    if (error.response) {
+      return {
+        'status' : error.response.status,
+        'message' : error.response.data.message,
+        'timestamp' : error.response.data.timestamp,
+      }
+    } else if (error.request) {
+      return {
+        'status' : 500,
+        'message' : error.request,
+        'timestamp' : new Date(),
+      }
+    } else {
+      return {
+        'status' : 500,
+        'message' : error.message,
+        'timestamp' : new Date(),
+      }
+    }
+  }
+   
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};

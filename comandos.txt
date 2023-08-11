@@ -1,0 +1,31 @@
+Rodar ElasticSearch:
+- Entrar no arquivo elasticsearch.yml na pasta config e ativar
+cluster.name: my-elasticsearch-cluster
+- Executar na pasta bin: elasticsearch.bat
+
+Rodar LogStash
+- Criar um arquivo logstash.conf na pasta bin e inserir:
+
+input { 
+    file {
+        path => "C:/Users/roger/Desktop/TCC/sgs/logs/microservice.log"
+        start_position => "beginning"
+    } 
+}
+output {
+    stdout { 
+        codec => rubydebug 
+    }
+elasticsearch { 
+        hosts => ["localhost:9200"]
+        index => "sgs-%{+dd.MM.yyyy}"
+    }
+}
+- Executar na pasta bin: logstash -f logstash.conf
+
+Rodar Kibana
+- Entrar no arquivo kibana.yml na pasta config e ativar
+elasticsearch.hosts: ["http://localhost:9200"]
+- Executar na pasta bin: kibana.bat
+- Acessar no localhost:5601, 
+- Em Management/Index Patterns/ 

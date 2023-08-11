@@ -11,6 +11,9 @@ export default {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@headlessui/tailwindcss')({ prefix: 'ui' })
+  ],
 }
 

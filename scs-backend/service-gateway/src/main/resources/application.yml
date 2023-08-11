@@ -1,0 +1,66 @@
+server:
+  port: 8989
+
+spring:
+  resilience4j:
+    circuitbreaker:
+      configs:
+        default:
+          timeoutDuration: 10s
+
+  application:
+    name: GATEWAY-SERVICE
+  config:
+    import: "optional:configserver:http://localhost:9196"
+  cloud:
+    gateway:
+      routes:
+        - id: MAIN-SERVICE
+          uri: lb://MAIN-SERVICE
+          predicates:
+            - Path=/api/v1/main/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: MAIN-SERVICE
+                fallbackUri: forward:/mainFallback
+
+        - id: PAYMENT-SERVICE
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/v1/payment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: PAYMENT-SERVICE
+                fallbackUri: forward:/paymentFallback
+            - AuthenticationUserFilter
+
+        - id: SECURITY-SERVICE
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+
+        - id: SECURITY-SERVICE
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/api/v1/user/**
+          filters:
+            - AuthenticationLoggedFilter
+
+        - id: PLATFORM-SERVICE-ADULT
+          uri: lb://PLATFORM-SERVICE
+          predicates:
+            - Path=/api/v1/movie/adult/**
+          filters:
+            - AuthenticationUserFilter
+
+        - id: PLATFORM-SERVICE
+          uri: lb://PLATFORM-SERVICE
+          predicates:
+            - Path=/api/v1/movie/**
+          filters:
+            - AuthenticationLoggedFilter
+
+
+

@@ -3,8 +3,12 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Movie, getMovies } from '../api/Api';
 import Spinner from './Spinner';
+import UseAuth from '../hooks/UseAuth';
+
 
 const MoviesCard = ({title, path}) => {
+  const { user } = UseAuth();
+
   const imageHost = 'https://image.tmdb.org/t/p/original'
 
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -15,7 +19,7 @@ const MoviesCard = ({title, path}) => {
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const movieList = await getMovies(path);
+      const movieList = await getMovies(path, user.user.token);
       if (movieList) {
         setMovies(movieList);
         setLoading(false);
@@ -56,7 +60,7 @@ const MoviesCard = ({title, path}) => {
 
                         {movies && movies.map((movie, i) => (
 
-                          <motion.div className='min-h-[200px] min-w-[230px] p-[14px] transition-all .2s hover:scale-105 hover:brightness-75'>
+                          <motion.div key={i} className='min-h-[200px] min-w-[230px] p-[14px] transition-all .2s hover:scale-105 hover:brightness-75'>
                             <img src={`${imageHost}` + movie.poster_path} alt="Texto" className='w-full h-auto rounded-md w-[200px] h-[90%] pointer-events-none' />
                             <div className="flex justify-between p-3">
                               <div className="flex items-center">
