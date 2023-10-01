@@ -5,8 +5,10 @@ import com.rogerio.servicepayment.entity.Payment;
 import com.rogerio.servicepayment.service.PaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.sleuth.SpanName;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -20,19 +22,24 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @SpanName("request-id")
     @PostMapping("/doPayment")
     public Payment doPayment(@RequestBody Payment payment) throws JsonProcessingException {
         final Payment resp = paymentService.doPayment(payment);
-        log.info("payment-controller", resp.toString());
+        log.info("payment-controller - [flow: do-payment]");
         return resp;
     }
 
-    @SpanName("request-id")
-    @GetMapping("/{orderId}")
-    public Payment findPaymentHistoryByOrderId(@PathVariable String orderId) {
-        final Payment payment = paymentService.findPaymentBySubscriptionId(orderId);
-        log.info("payment-controller", payment.toString());
+    @GetMapping("/subscription/{id}")
+    public Payment findPaymentBySubscriptionId(@PathVariable String id) {
+        final Payment payment = paymentService.findPaymentBySubscriptionId(id);
+        log.info("payment-controller - [flow: get-payment-by-subscription]");
         return payment;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Payment>> findAllPayments() {
+        List<Payment> payments = paymentService.getAll();
+        log.info("payment-controller - [flow: list-payments]");
+        return ResponseEntity.ok(payments);
     }
 }

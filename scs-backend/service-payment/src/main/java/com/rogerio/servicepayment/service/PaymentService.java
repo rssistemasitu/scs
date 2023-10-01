@@ -2,6 +2,7 @@ package com.rogerio.servicepayment.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rogerio.servicepayment.entity.Payment;
+import com.rogerio.servicepayment.exception.error.InternalErrorException;
 import com.rogerio.servicepayment.exception.error.NotFoundException;
 import com.rogerio.servicepayment.repository.PaymentRepository;
 import org.slf4j.Logger;
@@ -23,14 +24,14 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
 
     public Payment doPayment(Payment payment) throws JsonProcessingException {
-        payment.setPaymentStatus(paymentProcessing());
         payment.setTransactionId(UUID.randomUUID().toString());
-        return paymentRepository.save(payment);
+        payment.setPaymentStatus(paymentProcessing());
+        if("success".equals(payment.getPaymentStatus())) {
+            return paymentRepository.save(payment);
+        }
+        return payment;
     }
 
-    public String paymentProcessing() {
-        return new Random().nextBoolean() ? "success" : "fail";
-    }
 
     @Cacheable("payment-by-subscription")
     public Payment findPaymentBySubscriptionId(String subscriptionId) {
@@ -45,5 +46,9 @@ public class PaymentService {
     @Cacheable("payments")
     public List<Payment> getAll() {
         return paymentRepository.findAll();
+    }
+
+    public String paymentProcessing() {
+        return new Random().nextBoolean() ? "success" : "fail";
     }
 }

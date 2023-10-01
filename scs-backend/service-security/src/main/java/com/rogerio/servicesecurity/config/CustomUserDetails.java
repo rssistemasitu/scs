@@ -21,14 +21,17 @@ public class CustomUserDetails implements UserDetails {
     @JsonIgnore
     private String password;
 
+    private boolean status;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(String id, String email, String password,
-                             Collection<? extends GrantedAuthority> authorities) {
+                             Collection<? extends GrantedAuthority> authorities, Boolean status) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.status = status;
     }
 
     public static CustomUserDetails build(User user) {
@@ -40,7 +43,8 @@ public class CustomUserDetails implements UserDetails {
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities);
+                authorities,
+                user.getStatus());
     }
 
     public String getId() {
@@ -98,5 +102,13 @@ public class CustomUserDetails implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

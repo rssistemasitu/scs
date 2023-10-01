@@ -1,6 +1,7 @@
-package com.rogerio.servicemain.repository;
+package com.rogerio.serviceplatform.repository;
 
-import com.rogerio.servicemain.entity.Subscription;
+
+import com.rogerio.serviceplatform.entity.Subscription;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface SubscriptionRepository extends MongoRepository<Subscription, String> {

@@ -7,26 +7,21 @@ import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.rogerio.servicemain.entity.Message;
-import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 @Component
 @Log4j2
-public class SocketServerService {
-
-    private Socket socketClient;
+public class SocketIOServerService {
 
     @Autowired
     private SocketIOServer socketServer;
@@ -34,7 +29,7 @@ public class SocketServerService {
     @Autowired
     private ProducerService producerService;
 
-    SocketServerService(SocketIOServer socketServer) throws URISyntaxException {
+    SocketIOServerService(SocketIOServer socketServer) throws URISyntaxException {
         this.socketServer=socketServer;
         this.socketServer.addConnectListener(onUserConnectWithSocket);
         this.socketServer.addDisconnectListener(onUserDisconnectWithSocket);
@@ -77,6 +72,7 @@ public class SocketServerService {
             log.info(String.format("Usuário %s enviando mensagem para todos os usuários.", message.getFrom()));
             socketServer.getBroadcastOperations().sendEvent("messageSendToAllUsers", message);
             producerService.sendMessage(message);
+            log.info(String.format("Mensagem enviada %s ", message));
 
             /**
              * After sending message to target user we can send acknowledge to sender

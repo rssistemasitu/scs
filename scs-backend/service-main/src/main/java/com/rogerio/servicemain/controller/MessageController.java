@@ -1,7 +1,7 @@
 package com.rogerio.servicemain.controller;
 
 import com.rogerio.servicemain.entity.Message;
-import com.rogerio.servicemain.service.SocketServerService;
+import com.rogerio.servicemain.service.SocketIOServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ import java.net.URISyntaxException;
 public class MessageController {
 
     @Autowired
-    private SocketServerService socketServerService;
+    private SocketIOServerService socketIOServerService;
 
     private static Logger log = LoggerFactory.getLogger(MessageController.class);
 
     @PostMapping
     public void sendMessage(@RequestBody Message message) throws URISyntaxException {
-        socketServerService.send(message);
+        socketIOServerService.send(message);
         log.info("message-controller - [flow: send-message]");
     }
 }

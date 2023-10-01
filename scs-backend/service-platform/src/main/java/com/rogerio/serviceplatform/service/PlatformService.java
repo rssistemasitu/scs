@@ -21,7 +21,6 @@ public class PlatformService {
     private String URL_API_MOVIES_TOP_RATED = String.format("%s/movie/top_rated?language=pt&api_key=%s",URL_API_MAIN,API_KEY);
     private String URL_API_MOVIES_UPCOMING = String.format("%s/movie/upcoming?language=pt&api_key=%s",URL_API_MAIN,API_KEY);
     private String URL_API_MOVIES_TRENDING = String.format("%s/trending/movie/week?language=pt&api_key=%s",URL_API_MAIN,API_KEY);
-    private String URL_API_MOVIES_ADULT = "https://www.eporner.com/api/v2/video/search/?query=teen&per_page=10&page=2&thumbsize=big&order=top-weekly&gay=0&lq=1&format=json";
 
     @Cacheable("movie-genres")
     public Object getGenres() {
@@ -56,12 +55,6 @@ public class PlatformService {
     @Cacheable("movie-trending")
     public Object getMoviesTrending() {
         Object list = restTemplate.getForObject(URL_API_MOVIES_TRENDING, Object.class);
-        return list;
-    }
-
-    @Cacheable("movie-adult")
-    public Object getMoviesAdult() {
-        Object list = restTemplate.getForObject(URL_API_MOVIES_ADULT, Object.class);
         return list;
     }
 }

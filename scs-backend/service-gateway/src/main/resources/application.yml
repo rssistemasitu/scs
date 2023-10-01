@@ -24,6 +24,7 @@ spring:
               args:
                 name: MAIN-SERVICE
                 fallbackUri: forward:/mainFallback
+            - AuthenticationUserFilter
 
         - id: PAYMENT-SERVICE
           uri: lb://PAYMENT-SERVICE
@@ -48,19 +49,12 @@ spring:
           filters:
             - AuthenticationLoggedFilter
 
-        - id: PLATFORM-SERVICE-ADULT
-          uri: lb://PLATFORM-SERVICE
-          predicates:
-            - Path=/api/v1/movie/adult/**
-          filters:
-            - AuthenticationUserFilter
-
         - id: PLATFORM-SERVICE
           uri: lb://PLATFORM-SERVICE
           predicates:
-            - Path=/api/v1/movie/**
+            - Path=/api/v1/platform/**
           filters:
-            - AuthenticationLoggedFilter
+            - AuthenticationUserFilter
 
 
 

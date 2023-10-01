@@ -5,10 +5,10 @@ import io.socket.client.Socket;
 
 import java.net.URISyntaxException;
 
-public class MySocketIOClient {
+public class SocketIOClient {
     private Socket socket;
 
-    public MySocketIOClient() {
+    public SocketIOClient() {
         try {
             // Conectar ao servidor Socket.IO
             socket = IO.socket("http://localhost:8878");
@@ -22,7 +22,7 @@ public class MySocketIOClient {
     }
 
     public void sendMessage(String message) {
-        MySocketIOClient client = new MySocketIOClient();
+        SocketIOClient client = new SocketIOClient();
         if (client.socket.connected()) {
             // Envia a mensagem com o evento "sendMessageToServer"
             client.socket.emit("messageSendToAllUsers", message);

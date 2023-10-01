@@ -1,9 +1,9 @@
-package com.rogerio.servicepayment.exception;
+package com.rogerio.serviceplatform.exception;
 
-import com.rogerio.servicepayment.exception.error.BadRequestException;
-import com.rogerio.servicepayment.exception.error.ErrorResponse;
-import com.rogerio.servicepayment.exception.error.InternalErrorException;
-import com.rogerio.servicepayment.exception.error.NotFoundException;
+import com.rogerio.serviceplatform.exception.error.BadRequestException;
+import com.rogerio.serviceplatform.exception.error.ErrorResponse;
+import com.rogerio.serviceplatform.exception.error.InternalErrorException;
+import com.rogerio.serviceplatform.exception.error.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +27,10 @@ public class CustomControllerAdvice extends ResponseEntityExceptionHandler {
     LocalDateTime date = LocalDateTime.now();
 
     @ExceptionHandler(InternalErrorException.class)
-    public final ResponseEntity<ErrorResponse> handleInternalErrorException(InternalError ex, WebRequest request) {
+    public final ResponseEntity<ErrorResponse> handleInternalServerException(InternalErrorException ex, WebRequest request) {
         ErrorResponse errorDetails = new ErrorResponse(INTERNAL_SERVER_ERROR.value(), this.date, ex.getMessage(),
                 request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -53,5 +53,7 @@ public class CustomControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getDescription(false));
         return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
     }
+
+
 
 }

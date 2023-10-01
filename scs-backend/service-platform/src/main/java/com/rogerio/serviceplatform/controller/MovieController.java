@@ -4,14 +4,13 @@ import com.rogerio.serviceplatform.service.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.SpanName;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/movie")
+@RequestMapping("/api/v1/platform/movie")
 public class MovieController {
     private static Logger log = LoggerFactory.getLogger(MovieController.class);
 
@@ -25,7 +24,7 @@ public class MovieController {
         return ResponseEntity.ok(genreList);
     }
 
-    @GetMapping("/now-playing")
+        @GetMapping("/now-playing")
     public ResponseEntity<Object> getMoviesNowPlaying() {
         final Object moviesList = platformService.getMoviesNowPlaying();
         log.info("platform-controller - [flow: get-movies-now-playing]");
@@ -57,13 +56,6 @@ public class MovieController {
     public ResponseEntity<Object> getMoviesTrending() {
         final Object moviesList = platformService.getMoviesTrending();
         log.info("platform-controller - [flow: get-movies-trending]");
-        return ResponseEntity.ok(moviesList);
-    }
-
-    @GetMapping("/adult")
-    public ResponseEntity<Object> getMoviesAdult() {
-        final Object moviesList = platformService.getMoviesAdult();
-        log.info("platform-controller - [flow: get-movies-adult]");
         return ResponseEntity.ok(moviesList);
     }
 }

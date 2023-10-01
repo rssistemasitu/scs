@@ -63,4 +63,6 @@ public class User {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<String> userDependents = new HashSet<>();
+
+    private Boolean consent;
 }

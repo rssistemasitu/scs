@@ -71,7 +71,4 @@ public class AuthenticationDependentFilter extends AbstractGatewayFilterFactory<
     public static class Config {
     }
 
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
-    }
 }

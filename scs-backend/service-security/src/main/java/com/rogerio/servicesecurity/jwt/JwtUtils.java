@@ -126,6 +126,6 @@ public class JwtUtils {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toSet());
 
-        return StatusAndRoleResponse.builder().roles(roles).status(userFromSession.isEnabled()).build();
+        return StatusAndRoleResponse.builder().roles(roles).status(userFromSession.isStatus()).build();
     }
 }

@@ -19,6 +19,7 @@ public class ServicePlatformApplication {
 	}
 
 	@Bean
+	@LoadBalanced
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}

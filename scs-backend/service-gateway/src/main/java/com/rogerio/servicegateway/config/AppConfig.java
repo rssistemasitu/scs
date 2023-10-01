@@ -2,6 +2,7 @@ package com.rogerio.servicegateway.config;
 
 import com.rogerio.servicegateway.exception.GatewayExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

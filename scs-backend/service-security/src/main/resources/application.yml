@@ -24,6 +24,11 @@ spring:
   config:
     import: "optional:configserver:http://localhost:9196"
 
+  sleuth:
+    span-name-logger-key: request-id
+    sampler:
+      probability: 1.0
+
 logging:
   file:
     path: C:/Users/roger/Desktop/TCC/sgs/logs
